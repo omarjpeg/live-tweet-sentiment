@@ -69,5 +69,5 @@ RUN python -m nltk.downloader stopwords
 RUN python -m nltk.downloader wordnet
 RUN python -m nltk.downloader punkt
 EXPOSE 8501
-CMD ["sh", "-c", "streamlit run --server.port $PORT a"]
+CMD ["sh", "-c", "streamlit run --server.port $PORT app.py"]
 
