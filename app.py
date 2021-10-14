@@ -184,13 +184,21 @@ if st.button('Go!'):
     if not buttonclicked:
         wn.ensure_loaded()  # first access to wn transforms it
         stop = set(stopwords.words('english'))
+        print('here')
         lemmatizer = WordNetLemmatizer()
+
         buttonclicked = True
+        print('here2')
         open('current_tweets.txt', 'w').close()
+        print('hereagain')
+
         thread2 = Thread(target=Listener.start_listening_and_send_tweets, args=[[topic1, topic2]])
         thread = Thread(target=pySpark.receive_stream, args=[])
+        print('hereok')
         thread2.start()
         thread.start()
+        print('hereok2')
+
         st.write(
             'Below you should find two LIVE updating (each 10 second interval, give it some time to  load! 😄 ) '
             'pie charts comparing the two terms you just entered and how the sentimental analysis algorithm is '
