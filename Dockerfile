@@ -68,4 +68,4 @@ RUN pip install -r requirements.txt --no-cache-dir
 RUN python -m nltk.downloader stopwords
 RUN python -m nltk.downloader wordnet
 RUN python -m nltk.downloader punkt
-EXPOSE 8501
+EXPOSE $PORT
