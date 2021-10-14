@@ -1,0 +1,10 @@
+tweepy==3.10.0
+scipy
+pandas
+streamlit
+wordcloud
+numpy
+seaborn
+nltk
+matplotlib
+pyspark
