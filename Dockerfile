@@ -63,7 +63,7 @@ RUN mamba install --quiet --yes \
     fix-permissions "/home/${NB_USER}"
 
 WORKDIR "${HOME}"
-COPY ["pySpark.py", "Listener.py", "emo_unicode.py", "app.py", "logistic_model.pk", "tfidf_vectorizer.pk" , "requirements.txt" ,"."]
+COPY ["pySpark.py", "Listener.py", "emo_unicode.py", "app.py", "logistic_model.pk", "tfidf_vectorizer.pk" , "requirements.txt" ,"./"]
 RUN pip install -r requirements.txt --no-cache-dir
 RUN python -m nltk.downloader stopwords
 RUN python -m nltk.downloader wordnet
