@@ -4,10 +4,12 @@ from tweepy import OAuthHandler
 import json
 import socket
 
+#twitter api keys, you have to sign up for a twitter developer account to get these
 consumer_key = 'AYoR5fpYK5IZuvHJtCBNd7tjx'
 consumer_secret = 'XXqvJtQ8HOZyls19SbgWNYQG6MguLDkA8qtMFFrMw1uTA2OWhD'
 access_token = '1438526381109833735-mBSov4dGzXLMaaHRtKGJ4xw6O77sGH'
 access_secret = 'zD4d9XGCSxvy1uKA5Nv4cWlRcFse9ZKwuzvLrV7oSS9r4'
+#get local ip
 host_name = socket.gethostbyname(socket.gethostname())
 
 
@@ -20,21 +22,22 @@ class TweetsListener(StreamListener):
     def on_data(self, data):
         try:
             msg = json.loads(data)
-            print("New tweet!")
+            # add at the end of each tweet time "__TIME_END__" to load later for our algorithm
             # if tweet is longer than 140 characters
             if "extended_tweet" in msg:
-                # add at the end of each tweet "t_end"
                 self.client_socket \
                     .send((str(msg['created_at']) + '__TIME_END__' + str(msg['extended_tweet']['full_text']).replace(
                     "\n", " ") + '\n'
                            ).encode('utf-8'))
             elif "retweeted_status" in msg:
+                #handle retweets by getting the text said in the retweet text that mentions the topic, ignoring the retweeted tweet
                 if "extended_tweet" in msg["retweeted_status"]:
                     self.client_socket \
                     .send((str(msg['retweeted_status']['created_at']) + '__TIME_END__' + str(msg['retweeted_status']['extended_tweet']['full_text']).replace(
                     "\n", " ") + '\n'
                            ).encode('utf-8'))
                 else:
+                    #same as above, but with no extended_tweet attribute so we mention text instead, returning retweet text only
                     self.client_socket \
                         .send((str(msg['retweeted_status']['created_at']) + '__TIME_END__' + str(
                         msg['retweeted_status']['text']).replace(
@@ -42,7 +45,6 @@ class TweetsListener(StreamListener):
                                ).encode('utf-8'))
             else:
                 # add at the end of each tweet "t_end"
-
                 self.client_socket \
                     .send((str(msg['created_at']) + '__TIME_END__' + str(msg['text']).replace("\n", " ") + '\n') \
                           .encode('utf-8'))
@@ -57,18 +59,20 @@ class TweetsListener(StreamListener):
 
 
 def sendData(c_socket, keyword):
-    print('start sending data from Twitter to socket')
+    print('started sending data from Twitter to socket')
     # authentication based on the credentials
     auth = OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_secret)
-    # start sending data from the Streaming API
+    # start sending data from the Streaming API to the socket passed, filtered by passed list of keyword(s)
     twitter_stream = Stream(auth, TweetsListener(c_socket), tweet_mode='extended')
     twitter_stream.filter(track=keyword, languages=["en"])
 
 
 def start_listening_and_send_tweets(topics):
+    #init a socket to send the data from twitter to our pyspark context for fault handling
     s = socket.socket()
     host = host_name
+    #tweets received are sent on port 5555 when a connection is formed
     port = 5555
     s.bind((host, port))
     s.listen(5)
