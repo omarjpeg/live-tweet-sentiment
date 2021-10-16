@@ -157,8 +157,8 @@ def read_clean_analyze_tweet():
         # what if tweet was only symbols? drop it
         tweets = tweets[tweets['tweet'] != ' ']
         tweets['score'] = tweets.apply(lambda x: analyze_tweet(x.tweet, x.time), axis=1)
-    all_tweets_analyzed =pd.concat([analyzed_tweets, tweets], ignore_index=True, sort=False)
-    return all_tweets_analyzed
+    analyzed_tweets =pd.concat([analyzed_tweets, tweets], ignore_index=True, sort=False)
+    return analyzed_tweets
 
 
 def update_figures(tweets, area1, underarea1, area2, underarea2, areamid):
