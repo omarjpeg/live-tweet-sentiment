@@ -5,10 +5,10 @@ import json
 import socket
 
 #twitter api keys, you have to sign up for a twitter developer account to get these
-consumer_key = 'AYoR5fpYK5IZuvHJtCBNd7tjx'
-consumer_secret = 'XXqvJtQ8HOZyls19SbgWNYQG6MguLDkA8qtMFFrMw1uTA2OWhD'
-access_token = '1438526381109833735-mBSov4dGzXLMaaHRtKGJ4xw6O77sGH'
-access_secret = 'zD4d9XGCSxvy1uKA5Nv4cWlRcFse9ZKwuzvLrV7oSS9r4'
+consumer_key = 'your_consumer_key'
+consumer_secret = 'your_consumer_secret'
+access_token = 'your_access_token'
+access_secret = 'your_access_secret'
 #get local ip
 host_name = socket.gethostbyname(socket.gethostname())
 
