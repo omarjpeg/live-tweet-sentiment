@@ -34,7 +34,7 @@ docker run omardocks/twitter-sentiment-app
 ```
 
 ## Motivation
-This was a internship application project that I built upon and improved as much as I could, testing it multiple times with a lot of use cases.
+This was a internship application project that I built upon and improved as much as I could in my free time as student, testing it multiple times with a lot of use cases and ironing out it's bugs.
 I hope you find it useful! Maybe even build upon it and use a better model with it. =)
 
 ### Known issues
