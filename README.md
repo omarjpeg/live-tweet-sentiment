@@ -32,7 +32,7 @@ streamlit run app.py
 
 If you pulled the docker image prior..
 ```
-docker run omardocks/twitter-sentiment-app
+docker run -p 8501:8501 omardocks/twitter-sentiment-app
 ```
 
 ## Motivation
