@@ -16,6 +16,10 @@ from nltk.corpus import wordnet as wn
 
 # set a button clicked flag for our streamlit app
 buttonclicked = False
+global readrows
+readrows = 0
+global analyzed_tweets
+analyzed_tweets = pd.DataFrame(columns = ['time', 'tweet'])
 sns.set()
 
 # a dict to process/clean tweets
@@ -67,7 +71,7 @@ def analyze_tweet(txt, time):
     pos, neg = loaded_model.predict_proba(sparse.hstack((mx, sparse.csr_matrix(week))))[0]
     read_clean_analyze_tweet.tweetcounter += 1
     #progress shown in cmd
-    print('analyzed {}/{} tweets'.format(read_clean_analyze_tweet.tweetcounter,read_clean_analyze_tweet.totaltweets))
+    print('analyzed {}/{} new tweets'.format(read_clean_analyze_tweet.tweetcounter,read_clean_analyze_tweet.totaltweets))
     if read_clean_analyze_tweet.tweetcounter == read_clean_analyze_tweet.totaltweets:
         print("Updating figures..")
     # arbitrary neutrality threshold, don't know any better (for now =) )
@@ -127,7 +131,21 @@ def process_text(txt):
 
 def read_clean_analyze_tweet():
     # read the updated tweets saved by pyspark process and analyze/classify them
-    tweets = pd.read_csv('current_tweets.txt', encoding='utf8', sep='__TIME_END__', names=['time', 'tweet'])
+
+    global readrows,analyzed_tweets
+    #to save analysis time, instead of spending time re analyzing the entire tweet dataset
+    #we develop a small algorithm to do this by saving the amount of tweets stored
+    #so far and only reading new ones every time unless we have no tweet stored
+    #we do this by saving the number of the last line read in the newly received tweets
+    #and using it to know where start reading the next tweet batch from the text file, incrementing it as we read more
+    if analyzed_tweets.empty:
+        tweets = pd.read_csv('current_tweets.txt', encoding='utf8', sep='__TIME_END__', names=['time', 'tweet'])
+        readrows += tweets.shape[0]
+    else:
+        new = pd.read_csv('current_tweets.txt', encoding='utf8', sep='__TIME_END__', names=['time', 'tweet'], skiprows=readrows)
+        readrows += new.shape[0]
+        tweets = new
+
     # do analysis/classification only if there are tweets about he topic
     tweets = tweets[tweets.tweet != None]
     #to show in console as a "loading screen"
@@ -139,7 +157,8 @@ def read_clean_analyze_tweet():
         # what if tweet was only symbols? drop it
         tweets = tweets[tweets['tweet'] != ' ']
         tweets['score'] = tweets.apply(lambda x: analyze_tweet(x.tweet, x.time), axis=1)
-    return tweets
+    all_tweets_analyzed =pd.concat([analyzed_tweets, tweets], ignore_index=True, sort=False)
+    return all_tweets_analyzed
 
 
 def update_figures(tweets, area1, underarea1, area2, underarea2, areamid):
@@ -155,6 +174,7 @@ def update_figures(tweets, area1, underarea1, area2, underarea2, areamid):
     for area, topic, data in [(area1, topic1, topic1tweets), (area2, topic2, topic2tweets)]:
         fig, ax = plt.subplots(constrained_layout=True)
         ax.axis('equal')
+
         ax.text(1 if topic == topic1 else 0, 0, f'Based on {data.shape[0]:,} Tweet(s)', transform=ax.transAxes)
         srs = pd.Series(data=[0, 0, 0], index=[0, 1, 2]).add(data.score.value_counts(), fill_value=0)
         data = pd.Series(data=srs, index=srs.index)
