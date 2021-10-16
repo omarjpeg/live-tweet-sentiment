@@ -1,5 +1,7 @@
 # live-tweet-sentiment
 
+![app_working](https://user-images.githubusercontent.com/64756875/137597284-7c635b39-1de3-458e-9c3f-d58918d1fc00.gif)
+
 This is a Streamlit web app that streams two one-word topics using tweepy and PySpark from twitter entered by
 the user and runs them through a logisitic regression classification algorithm 
 trained on the  [Sentiment140](https://www.kaggle.com/kazanova/sentiment140) dataset,
