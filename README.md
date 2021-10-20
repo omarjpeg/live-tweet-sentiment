@@ -1,4 +1,4 @@
-# live-tweet-sentiment
+# streamlit-pyspark-live-tweets
 
 ![appinaction](https://user-images.githubusercontent.com/64756875/137597466-f954bd43-bf1b-4075-818b-e1f0317d748a.gif)
 
